@@ -1,3 +1,6 @@
+clear; clc; close all;
+addpath(genpath('train'))
+
 numOfTweets = 10000;
 numOfToken = length(load('2.out'));
 numOfClass = 8;
@@ -17,21 +20,26 @@ for i = 1:numOfClass
     trainMatrix(i, :) = (trainMatrix(i, :) + 1) / (totalFrequency + numOfToken);
 end
 
+% Test model
+dir_name = 'testVectors/*.out';
+files = dir(dir_name);
 
-% Test
-tweet = load('spartan2.out');
+for n = 1:size(files,1)
+    fileName = files(n).name;
+    fprintf('Twerating for %s: ', fileName);
+    
+    tweet = load(fileName);
 
-maxClass = 1;
-for i = 1:numOfClass
-   ratio = 0;
-   for tokenIndex = 1:numOfToken
-       ratio = ratio + tweet(tokenIndex) * log(trainMatrix(maxClass, tokenIndex));
-       ratio = ratio - tweet(tokenIndex) * log(trainMatrix(i, tokenIndex));
-   end
-   if ratio < 0
-       maxClass = i;
-   end
+    maxClass = 1;
+    for i = 1:numOfClass
+       ratio = 0;
+       for tokenIndex = 1:numOfToken
+           ratio = ratio + tweet(tokenIndex) * log(trainMatrix(maxClass, tokenIndex));
+           ratio = ratio - tweet(tokenIndex) * log(trainMatrix(i, tokenIndex));
+       end
+       if ratio < 0
+           maxClass = i;
+       end
+    end
+    fprintf('%d\n', maxClass);
 end
-
-maxClass
-
