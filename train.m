@@ -1,9 +1,12 @@
 numOfTweets = 10000;
-numOfToken = 80000;
+numOfToken = length(load('2.out'));
 numOfClass = 8;
 
-tokenlist = zeros(1, numOfToken);
+% Train
 trainMatrix = zeros(numOfClass, numOfToken);
+for i = 2:9
+    trainMatrix(i - 1, :) = load(sprintf('%d.out', i));
+end
 
 % get P(spam)
 p = 1 / numOfClass;
@@ -11,16 +14,16 @@ p = 1 / numOfClass;
 % get P(words|spam)
 for i = 1:numOfClass
     totalFrequency = sum(trainMatrix(i, :));
-    trainMatrix(i, :) = (trainMatrix(i, :) + 1) / (totalFrequency + numToken);
+    trainMatrix(i, :) = (trainMatrix(i, :) + 1) / (totalFrequency + numOfToken);
 end
 
 
-tweet = zeros(1, numOfToken);
+% Test
+tweet = load('spartan2.out');
 
-p = zeros(1, numOfClass);
 maxClass = 1;
-ratio = 0;
 for i = 1:numOfClass
+   ratio = 0;
    for tokenIndex = 1:numOfToken
        ratio = ratio + tweet(tokenIndex) * log(trainMatrix(maxClass, tokenIndex));
        ratio = ratio - tweet(tokenIndex) * log(trainMatrix(i, tokenIndex));
