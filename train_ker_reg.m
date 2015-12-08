@@ -1,25 +1,6 @@
 %% Load and prep data
-
-clear; clc; close all;
-addpath(genpath('train'))
-
-numOfTweets = 10000;
-numOfToken = length(load('2.out'));
-numOfClass = 8;
-
-% Train
-trainMatrix = zeros(numOfClass, numOfToken);
-for i = 2:9
-    trainMatrix(i - 1, :) = load(sprintf('%d.out', i));
-end
-
-% Test model
-dir_name = 'testVectors/*.out';
-files = dir(dir_name);
-
-trainLabel = [2:9]';
-
-testLabel = [5 7 3 5 9 9 6 5 8 2 8 7 6 3 2 4 8 6 6 3 7 4 8 7 6]';
+loadData
+results = ones(size(files,1), 1);
 
 %% Kernel Regression
 
@@ -29,6 +10,7 @@ testLabel = [5 7 3 5 9 9 6 5 8 2 8 7 6 3 2 4 8 6 6 3 7 4 8 7 6]';
 taus = [1000 10000 100000 1000000];
 % taus = [5000 6000 7000 8000 9000 10000];
 % taus = linspace(0, 1000000);
+% taus = linspace(1000, 10000, 20);
 % taus = .0001;
 % taus = 1000000;
 ourLabel = ones(size(testLabel));
@@ -36,7 +18,7 @@ ourLabel = ones(size(testLabel));
 bestDev = 100000000;
 bestTau = 0;
 for tau = taus
-    fprintf('Testing tau value %d...\n', tau);
+    fprintf('Testing tau value %d...\n\n', tau);
     g = @(x1,x2)exp(-dot(x1-x2,x1-x2)/(2*tau^2));
 
     for n = 1:size(files,1)
@@ -57,14 +39,19 @@ for tau = taus
         label = numerator/denominator;
         ourLabel(n) = label;
         fprintf('%d\n', label);
+        results(n) = label;
     end
     stdDev = std(testLabel, ourLabel);
     if(stdDev < bestDev)
         bestDev = stdDev;
         bestTau = tau;
     end
-    fprintf('Standard Deviation %d\n\n', stdDev);
-
+    fprintf('\nStandard Deviation %d\n\n', stdDev);
+    
+    [testLabel results]
+    
+    fprintf('-----------------------------------------------------\n\n');
+    
 end
 fprintf('Best stdDev: %d\n', bestDev);
 fprintf('Best tau: %d\n', bestTau);

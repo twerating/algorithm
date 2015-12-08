@@ -1,15 +1,8 @@
-clear; clc; close all;
-addpath(genpath('train'))
+%% Load and prep data
+loadData
+results = ones(size(files,1), 1);
 
-numOfTweets = 10000;
-numOfToken = length(load('2.out'));
-numOfClass = 8;
-
-% Train
-trainMatrix = zeros(numOfClass, numOfToken);
-for i = 2:9
-    trainMatrix(i - 1, :) = load(sprintf('%d.out', i));
-end
+%% Naive Bayes
 
 % get P(spam)
 p = 1 / numOfClass;
@@ -19,10 +12,6 @@ for i = 1:numOfClass
     totalFrequency = sum(trainMatrix(i, :));
     trainMatrix(i, :) = (trainMatrix(i, :) + 1) / (totalFrequency + numOfToken);
 end
-
-% Test model
-dir_name = 'testVectors/*.out';
-files = dir(dir_name);
 
 for n = 1:size(files,1)
     fileName = files(n).name;
@@ -42,4 +31,7 @@ for n = 1:size(files,1)
        end
     end
     fprintf('%d\n', maxClass);
+    results(n) = maxClass;
 end
+
+[testLabel results]
