@@ -3,6 +3,7 @@ loadData
 results = ones(size(files,1), 1);
 
 %% Naive Bayes
+% In theory, you should only run raw vectors with these
 
 % get P(spam)
 p = 1 / numOfClass;
@@ -32,4 +33,4 @@ for n = 1:size(files,1)
     results(n) = maxClass;
 end
 
-[testLabel results]
+disp([testLabel results])
