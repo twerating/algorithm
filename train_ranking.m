@@ -1,17 +1,20 @@
 %% Load and prep data
 loadData
-results = ones(size(files,1), 1);
 
 %% Ranking SVM
 
-% tryC = [5];
-% tryn0 = [.5];
-% tryIter = [6000];
-tryC = [0.01, 0.1, 1, 10, 100, 1000];
-tryn0 = [0.01, 0.5, 1.0, 10, 100];
+tryC = [.01];
+tryn0 = [100];
+tryIter = [5];
+% tryC = [0.01, 0.1, 1, 10, 100, 1000];
+% tryn0 = [0.01, 0.5, 1.0, 10, 100];
+% tryIter = [5,50,100,1000,5000,6000];
+tryC = [0.00001, 0.0001, 0.001, .01];
+% tryn0 = [0.01, 0.5, 1.0, 10, 100];
 tryIter = [5,50,100,1000,5000,6000];
 w = zeros(1,size(trainMatrix, 2));
 numTrain = size(trainMatrix, 1);
+numTest = size(testMatrix, 1);
 divisor = numTrain*(numTrain-1)/2;
 
 % Best result and hyper-parameters

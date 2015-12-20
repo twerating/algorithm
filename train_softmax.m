@@ -1,26 +1,28 @@
-function train_softmax(error)
+function y = train_softmax(error)
 % error is the allowed error range.
 loadData
-results = ones(size(files,1), 1);
+results = ones(numTest, 1);
+numFeatures = size(trainMatrix,2);
 
-w = zeros(numOfToken, numOfClass);
-w(:, end) = zeros(numOfToken,1);
+w = zeros(numFeatures, numOfClass);
+w(:, end) = zeros(numFeatures,1);
 deltaw = gradient(w, trainMatrix, trainLabel);
 while(norm(deltaw, 2) > 8)
   w = w + 0.0005 * deltaw;
   deltaw = gradient(w, trainMatrix, trainLabel);
 end
 accuracy = 0;
-for i = 1 : numFiles
+for i = 1 : numTest
   predict = ones(numOfClass,1);
   for j = 1 : numOfClass-1
     predict(j) = exp(testMatrix(i,:) * w(:, j));
   end
   [~, I] = sort(predict, 'descend');
   results(i) = I(1) + 1; % index is 1-8, but label is 2-9, so +1 to get label from index
+  error
   accuracy = accuracy + (abs(results(i)-testLabel(i))<=error);
 end
-accuracy = accuracy / numFiles;
+accuracy = accuracy / numTest;
 fprintf('test Label, predict Label\n')
 disp([testLabel results])
 fprintf('Allowing error within %d, accuracy is: %f\n', error, accuracy)

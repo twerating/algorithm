@@ -3,6 +3,7 @@ loadData
 results = ones(size(files,1), 1);
 
 %% Naive Bayes
+% In theory, you should only run raw vectors with these
 
 % get P(spam)
 p = 1 / numOfClass;
@@ -16,15 +17,13 @@ end
 for n = 1:size(files,1)
     fileName = files(n).name;
     fprintf('Twerating for %s: ', fileName);
-    
-    tweet = load(fileName);
 
     maxClass = 1;
     for i = 1:numOfClass
        ratio = 0;
        for tokenIndex = 1:numOfToken
-           ratio = ratio + tweet(tokenIndex) * log(trainMatrix(maxClass, tokenIndex));
-           ratio = ratio - tweet(tokenIndex) * log(trainMatrix(i, tokenIndex));
+           ratio = ratio + testMatrix(n,tokenIndex) * log(trainMatrix(maxClass, tokenIndex));
+           ratio = ratio - testMatrix(n,tokenIndex) * log(trainMatrix(i, tokenIndex));
        end
        if ratio < 0
            maxClass = i;
@@ -34,4 +33,4 @@ for n = 1:size(files,1)
     results(n) = maxClass;
 end
 
-[testLabel results]
+disp([testLabel results])
