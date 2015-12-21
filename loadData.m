@@ -103,17 +103,59 @@
 % trainMatrix = double(trainMatrix);
 % testMatrix = double(testMatrix);
 
-%% Load W2Vtest1000.mat W2Vtrain1000.mat
+% %% Load W2Vtest1000.mat W2Vtrain1000.mat
+% 
+% % clear; clc; close all;
+% addpath(genpath('data1000'))
+% 
+% load('W2Vtrain1000.mat')
+% load('W2Vtest1000.mat')
+% trainLabel = double(trainLabel);
+% testLabel = double(testLabel);
+% trainMatrix = double(trainMatrix);
+% testMatrix = double(testMatrix);
+
+% %% Load W2Vtest1000.mat W2Vtrain1000.mat
+% 
+% % clear; clc; close all;
+% addpath(genpath('data1000_1'))
+% 
+% load('W2Vtrain1000new.mat')
+% load('W2Vtest1000new.mat')
+% trainLabel = double(trainLabel);
+% testLabel = double(testLabel);
+% trainMatrix = double(trainMatrix);
+% testMatrix = double(testMatrix);
+
+
+%% Load W2Vtrain2000-225.mat W2Vtest2000-225.mat
 
 % clear; clc; close all;
-addpath(genpath('data1000'))
+addpath(genpath('data'))
 
-load('W2Vtrain1000.mat')
-load('W2Vtest1000.mat')
+load('W2Vtrain1000-225.mat')
+load('W2Vtest1000-225.mat')
+% load('W2Vtrain1000-225x.mat')
+% load('W2Vtest1000-225x.mat')
+% load('W2Vtrain1000-300.mat')
+% load('W2Vtest1000-300.mat')
+% load('W2Vtrain1000-300x.mat')
+% load('W2Vtest1000-300x.mat')
+% load('W2Vtrain1000-400.mat')
+% load('W2Vtest1000-400.mat')
+% load('W2Vtrain1000-400x.mat')
+% load('W2Vtest1000-400x.mat')
+% load('W2Vtrain2000-225.mat')
+% load('W2Vtest2000-225.mat')
+% load('W2Vtrain2000-300.mat')
+% load('W2Vtest2000-300.mat')
+% load('W2Vtrain2000-400.mat')
+% load('W2Vtest2000-400.mat')
 trainLabel = double(trainLabel);
 testLabel = double(testLabel);
 trainMatrix = double(trainMatrix);
 testMatrix = double(testMatrix);
+
 
 %% ALWAYS load these global variables
 
@@ -122,10 +164,10 @@ numTrain = size(trainMatrix, 1);
 numTest = size(testMatrix, 1);
 results = ones(numTest, 1);
 
-% %% Normalize raw vector
-% for i = 1:numTrain
-%     trainMatrix(i,:) = trainMatrix(i,:) / norm(trainMatrix(i,:));
-% end
-% for i = 1:numTest
-%     testMatrix(i,:) = testMatrix(i,:) / norm(testMatrix(i,:));
-% end
+%% Normalize raw vector
+for i = 1:numTrain
+    trainMatrix(i,:) = trainMatrix(i,:) / norm(trainMatrix(i,:));
+end
+for i = 1:numTest
+    testMatrix(i,:) = testMatrix(i,:) / norm(testMatrix(i,:));
+end

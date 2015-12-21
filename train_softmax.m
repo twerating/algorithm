@@ -4,11 +4,14 @@ loadData
 results = ones(numTest, 1);
 numFeatures = size(trainMatrix,2);
 
+% Learning rate
+C = 0.05;
+
 w = zeros(numFeatures, numOfClass);
 w(:, end) = zeros(numFeatures,1);
 deltaw = gradient(w, trainMatrix, trainLabel);
-while(norm(deltaw, 2) > 8)
-  w = w + 0.0005 * deltaw;
+while(norm(deltaw, 2) > 0.1)
+  w = w + C * deltaw;
   deltaw = gradient(w, trainMatrix, trainLabel);
 end
 accuracy = 0;

@@ -1,45 +1,63 @@
 %% Load and prep data
-loadData
+clear;
+% loadData
 
-%% Stochastic
+load('data/W2Vtrain2000-300.mat');
+load('data/W2Vtest2000-300.mat');
+disp('Linear Regression using Newtons Method');
 
-rate = .000000026;
-rate = .5;
+trainLabel = double(trainLabel);
+testLabel = double(testLabel);
+trainMatrix = double(trainMatrix);
+testMatrix = double(testMatrix);
 
-w = zeros(size(trainMatrix,2),1);
-oldW = ones(size(trainMatrix,2),1);
-counter = 0;
+numOfClass = 8;
+numTrain = size(trainMatrix, 1);
+numTest = size(testMatrix, 1);
+results = ones(numTest, 1);
 
-% while counter < 20 
-while sum((w-oldW).^2) > 0.00001
-    tweet = trainMatrix(mod(counter,numTrain)+1,:);
-    oldW = w;
-    grad = (w'*tweet' - trainLabel(mod(counter,numTrain)+1)) * tweet';
-    w = w - rate*grad;
-    counter = counter + 1;
+% Normalize
+for i = 1:numTrain
+    trainMatrix(i,:) = trainMatrix(i,:) / norm(trainMatrix(i,:));
 end
-counter
-
-fprintf('Stochatic Gradient Descent:\n', i);
-
-results = testMatrix * w;
-
-disp([testLabel results])
-corr = corrcoef(testLabel, results);
-fprintf('Correlation = %d\n\n', corr(2,1));
+for i = 1:numTest
+    testMatrix(i,:) = testMatrix(i,:) / norm(testMatrix(i,:));
+end
 
 %% Newton's method
-lambda = [0.001 0.01 0.1 1 10 100 1000];
+lambda = [0.000001 0.00001 0.0001 0.001 0.01 0.1 1 10 100 1000];
 % lambda = [10 100 1000];
-lambda = [0.000001 0.00001 0.0001 0.001];
+% lambda = [0.000001 0.00001 0.0001 0.001];
 % lambda = [0.0000000001 0.000000001 0.00000001 0.0000001 0.000001];
 
+bestCorr = -2;
+bestAcc = 0;
+bestLambda = 0;
 for i = lambda
-    fprintf('---------------------------------\n\n');
-    fprintf('Lambda regularizer value %d:\n', i);
+%     fprintf('Lambda regularizer value %d:\n', i);
     w = sparse(trainMatrix'*trainMatrix + i*diag(ones(1,size(trainMatrix,2))))\trainMatrix'*trainLabel;
     results = testMatrix * w;
-    [testLabel results]
+%     [testLabel results]
     corr = corrcoef(testLabel, results);
-    fprintf('Correlation = %d\n\n', corr(2,1));
+    error = 1;
+    accuracy = 0;
+    for j = 1 : numTest
+        accuracy = accuracy + (abs(results(j)-testLabel(j))<=error);
+    end
+    accuracy = accuracy / numTest;
+%     if(bestCorr < corr(2,1))
+    if(bestAcc < accuracy)
+        bestCorr = corr(2,1);
+        bestAcc = accuracy;
+        bestLambda = i;
+        best = [testLabel results];
+    end
+%     fprintf('Correlation = %d\n\n', corr(2,1));
+%     fprintf('Accuracy %d\n\n', accuracy);
+%     fprintf('---------------------------------\n\n');
 end
+
+fprintf('Best corr: %d\n', bestCorr);
+fprintf('Best accuracy %d\n', bestAcc);
+fprintf('Best lambda %d\n', bestLambda);
+disp(best)

@@ -1,5 +1,24 @@
 %% Load and prep data
-loadData
+clear;
+% loadData
+load('data/W2Vtrain2000-300.mat');
+load('data/W2Vtest2000-300.mat');
+trainLabel = double(trainLabel);
+testLabel = double(testLabel);
+trainMatrix = double(trainMatrix);
+testMatrix = double(testMatrix);
+
+numOfClass = 8;
+numTrain = size(trainMatrix, 1);
+numTest = size(testMatrix, 1);
+results = ones(numTest, 1);
+
+for i = 1:numTrain
+    trainMatrix(i,:) = trainMatrix(i,:) / norm(trainMatrix(i,:));
+end
+for i = 1:numTest
+    testMatrix(i,:) = testMatrix(i,:) / norm(testMatrix(i,:));
+end
 
 %% Kernel Regression
 
@@ -7,14 +26,16 @@ error = 1;
 
 % taus = [0.000001 0.00001 0.0001 0.001 0.01 0.1 1 10 100 1000];
 taus = [0.0001 0.001 0.01 0.1 1 10 100 1000];
-taus = [0.0001 0.001 0.01 0.1 1 10 100 1000];
+taus = [0.05 0.1 1 10 100 1000];
 % taus = linspace(0.0001, 0.001, 10);
-taus = [0.05 1 10 100 1000];
+% taus = [0.05 1 10 100 1000];
+% taus = [0.05 1 10 100 1000];
 
-bestDev = 100000000;
+bestCorr = -2;
 bestTau = 0;
+bestAcc = 0;
 for tau = taus
-    fprintf('Testing tau value %d...\n\n', tau);
+%     fprintf('Testing tau value %d...\n\n', tau);
     g = @(x1,x2)exp(-dot(x1-x2,x1-x2)/(2*tau^2));
 %     g = @(x1,x2)exp(-sqrt(dot(x1-x2,x1-x2))/(2*tau^2));
     accuracy = 0;
@@ -34,20 +55,22 @@ for tau = taus
     end
     accuracy = accuracy / numTest;
     corr = corrcoef(testLabel, results);
-    stdDev = std(testLabel, results);
-    if(stdDev < bestDev)
-        bestDev = stdDev;
+%     if(bestCorr < corr(2,1))
+    if(bestAcc < accuracy)
+        bestCorr = corr(2,1);
+%         bestDev = stdDev;
         bestTau = tau;
+        bestAcc = accuracy;
         best = [testLabel results];
     end
-    disp([testLabel results])
-    fprintf('Standard Deviation %d\n', stdDev);
-    fprintf('Corr %d\n\n', corr(2,1));
-    fprintf('Accuracy %d\n\n', accuracy);
-    fprintf('-----------------------------------------------------\n\n');
+%     disp([testLabel results])
+%     fprintf('Corr %d\n', corr(2,1));
+%     fprintf('Accuracy %d\n\n', accuracy);
+%     fprintf('-----------------------------------------------------\n\n');
     
 end
-fprintf('Best stdDev: %d\n', bestDev);
+fprintf('Best corr: %d\n', bestCorr);
+fprintf('Best accuracy %d\n', bestAcc);
 fprintf('Best tau: %d\n', bestTau);
 best
 plot(best(:,1),best(:,2), 'bo')
